@@ -1,0 +1,175 @@
+// SPDX-License-Identifier: UNLICENSE
+pragma solidity 0.8.24;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "./AutographAccessControl.sol";
+import "./AutographLibrary.sol";
+import "./AutographData.sol";
+import "./AutographMarket.sol";
+
+
+contract AutographAction is
+    HubRestricted,
+    ILensModule,
+    IPublicationActionModule
+{
+    AutographData public autographData;
+    AutographAccessControl public autographAccessControl;
+    AutographMarket public autographMarket;
+    string private _metadata;
+
+    error CurrencyNotWhitelisted();
+    error InvalidAddress();
+    error ExceedAmount();
+    error InvalidAmounts();
+
+    IModuleRegistry public immutable MODULE_GLOBALS;
+
+    mapping(uint256 => mapping(uint256 => uint256)) _catalogGroups;
+
+    modifier OnlyAdmin() {
+        if (!autographAccessControl.isAdmin(msg.sender)) {
+            revert InvalidAddress();
+        }
+        _;
+    }
+
+    constructor(
+        string memory _metadataDetails,
+        address _hub,
+        address _moduleGlobals,
+        address _autographDataAddress,
+        address _autographAccessControlAddress,
+        address _autographMarketAddress
+    ) HubRestricted(_hub) {
+        MODULE_GLOBALS = IModuleRegistry(_moduleGlobals);
+        autographData = AutographData(_autographDataAddress);
+        autographAccessControl = AutographAccessControl(
+            _autographAccessControlAddress
+        );
+        autographMarket = AutographMarket(_autographMarketAddress);
+        _metadata = _metadataDetails;
+    }
+
+    function initializePublicationAction(
+        uint256 _profileId,
+        uint256 _pubId,
+        address _executor,
+        bytes calldata _data
+    ) external override onlyHub returns (bytes memory) {
+        AutographLibrary.OpenActionParams memory _autographCreator = abi.decode(
+            _data,
+            (AutographLibrary.OpenActionParams)
+        );
+
+        if (
+            _autographCreator.autographType ==
+            AutographLibrary.AutographType.Catalog &&
+            autographAccessControl.isAdmin(_executor)
+        ) {
+            autographData.createAutograph(
+                AutographLibrary.AutographInit({
+                    price: _autographCreator.price,
+                    acceptedTokens: _autographCreator.acceptedTokens,
+                    uri: _autographCreator.uri,
+                    pubId: _pubId,
+                    profileId: _profileId,
+                    amount: _autographCreator.amount,
+                    pages: _autographCreator.pages,
+                    designer: _executor,
+                    pageCount: _autographCreator.pageCount
+                })
+            );
+        } else if (autographAccessControl.isDesigner(_executor)) {
+            if (
+                autographData.getCollectionDesignerByGalleryId(
+                    _autographCreator.collectionId,
+                    _autographCreator.galleryId
+                ) !=
+                _executor &&
+                !autographAccessControl.isNPC(_executor)
+            ) {
+                revert InvalidAddress();
+            }
+
+            autographData.connectPublication(
+                _pubId,
+                _profileId,
+                _autographCreator.collectionId,
+                _autographCreator.galleryId
+            );
+        }
+
+        return
+            abi.encode(
+                _autographCreator.autographType,
+                _autographCreator.amount,
+                _autographCreator.uri,
+                _autographCreator.price,
+                _autographCreator.acceptedTokens
+            );
+    }
+
+    function processPublicationAction(
+        Types.ProcessActionParams calldata _params
+    ) external override onlyHub returns (bytes memory) {
+        (
+            string memory _encryptedFulfillment,
+            address _currency,
+            uint8 _quantity,
+            AutographLibrary.AutographType _type
+        ) = abi.decode(
+                _params.actionModuleData,
+                (string, address, uint8, AutographLibrary.AutographType)
+            );
+
+        // if (!MODULE_GLOBALS.isErc20CurrencyRegistered(_currency)) {
+        //     revert CurrencyNotWhitelisted();
+        // }
+
+        uint256 _collectionId = 0;
+
+        if (_type != AutographLibrary.AutographType.Catalog) {
+            _collectionId = autographData.getCollectionByPublication(
+                _params.publicationActedProfileId,
+                _params.publicationActedId
+            );
+        }
+
+        autographMarket.buyTokenAction(
+            _encryptedFulfillment,
+            _params.transactionExecutor,
+            _currency,
+            _collectionId,
+            _quantity,
+            _type
+        );
+
+        return abi.encode(_type, _currency);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view override returns (bool) {
+        return
+            interfaceId == bytes4(keccak256(abi.encodePacked("LENS_MODULE"))) ||
+            interfaceId == type(IPublicationActionModule).interfaceId;
+    }
+
+    function getModuleMetadataURI()
+        external
+        view
+        override
+        returns (string memory)
+    {
+        return _metadata;
+    }
+
+    function setAutographMarket(address _autographMarket) public OnlyAdmin {
+        autographMarket = AutographMarket(_autographMarket);
+    }
+
+    function setAutographData(address _autographData) public OnlyAdmin {
+        autographData = AutographData(_autographData);
+    }
+}

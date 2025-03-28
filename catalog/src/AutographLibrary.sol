@@ -1,0 +1,101 @@
+// SPDX-License-Identifier: UNLICENSE
+pragma solidity 0.8.24;
+
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+
+contract AutographLibrary {
+    enum AutographType {
+        NFT,
+        Hoodie,
+        Shirt,
+        Catalog
+    }
+
+    struct ActionParams {
+        EnumerableSet.AddressSet acceptedTokens;
+        string[] pages;
+        string uri;
+        AutographType autographType;
+        uint256 collectionId;
+        uint256 price;
+        uint256 galleryId;
+        uint256 amount;
+        uint8 pageCount;
+    }
+
+    struct AutographInit {
+        string[] pages;
+        address[] acceptedTokens;
+        string uri;
+        string postId;
+        address designer;
+        uint256 price;
+        uint256 amount;
+        uint8 pageCount;
+    }
+
+    struct Autograph {
+        string[] pages;
+        EnumerableSet.AddressSet acceptedTokens;
+        string uri;
+        string postId;
+        address designer;
+        uint256 price;
+        uint256 minted;
+        uint256 amount;
+        uint8 pageCount;
+    }
+
+    struct CollectionInit {
+        address[] npcs;
+        address[] acceptedTokens;
+        string uri;
+        uint256 price;
+        uint256 amount;
+        AutographType collectionType;
+    }
+
+    struct Collection {
+        string[] postIds;
+        EnumerableSet.AddressSet npcs;
+        EnumerableSet.AddressSet acceptedTokens;
+        EnumerableSet.UintSet mintedTokenIds;
+        string uri;
+        address designer;
+        uint256 price;
+        uint256 galleryId;
+        uint256 amount;
+        AutographType collectionType;
+    }
+
+    struct Gallery {
+        EnumerableSet.UintSet collectionIds;
+        string uri;
+        address designer;
+    }
+
+    struct Currency {
+        uint256 weiAmount;
+        uint256 rate;
+    }
+
+    struct Order {
+        uint256[] subOrderIds;
+        string fulfillment;
+        address buyer;
+        uint256 total;
+    }
+
+    struct SubOrder {
+        uint256[] mintedTokenIds;
+        address fulfiller;
+        address designer;
+        address currency;
+        uint256 fulfillerAmount;
+        uint256 designerAmount;
+        uint256 totalPrice;
+        uint256 collectionId;
+        uint16 amount;
+        AutographType autographType;
+    }
+}
