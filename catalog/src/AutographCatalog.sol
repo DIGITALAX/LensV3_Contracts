@@ -113,7 +113,7 @@ contract AutographCatalog {
         return _autograph.acceptedTokens.contains(token);
     }
 
-    function getAutographPostId() public view returns (string memory) {
+    function getAutographPostId() public view returns (uint256) {
         return _autograph.postId;
     }
 

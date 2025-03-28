@@ -231,7 +231,7 @@ contract AutographMarket {
         uint256 collectionId,
         uint256 amount,
         AutographLibrary.AutographType autographType
-    ) internal pure {
+    ) internal view {
         if (autographType == AutographLibrary.AutographType.Catalog) {
             if (!autographCatalog.isAcceptedToken(currency)) {
                 revert AutographErrors.CurrencyNotWhitelisted();
@@ -254,7 +254,7 @@ contract AutographMarket {
             }
 
             if (
-                autographCollections.getMintedTokenIds(collectionId).length +
+                autographCollections.getCollectionMintedTokenIds(collectionId).length +
                     amount >
                 autographCollections.getCollectionAmount(collectionId)
             ) {

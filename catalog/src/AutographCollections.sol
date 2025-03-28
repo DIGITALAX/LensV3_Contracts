@@ -23,11 +23,13 @@ contract AutographCollections {
     mapping(address => EnumerableSet.UintSet) private _designerGalleries;
     mapping(uint256 => AutographLibrary.Gallery) private _galleries;
     mapping(uint256 => uint256) private _tokenIdToCollection;
+    mapping(uint256 => uint256) private _postToCollection;
 
     event GalleryCreated(address designer, uint256 galleryId);
     event GalleryUpdated(address designer, uint256 galleryId);
     event GalleryDeleted(address designer, uint256 galleryId);
     event CollectionDeleted(uint256 collectionId, uint256 galleryId);
+    event PostIdConnected(uint256 postId, uint256 collectionId);
 
     modifier onlyDesigner() {
         if (!autographAccessControl.isDesigner(msg.sender)) {
@@ -38,6 +40,13 @@ contract AutographCollections {
 
     modifier onlyMarket() {
         if (msg.sender != address(autographMarket)) {
+            revert AutographErrors.AddressNotVerified();
+        }
+        _;
+    }
+
+    modifier onlyAction() {
+        if (!autographAccessControl.isAction(msg.sender)) {
             revert AutographErrors.AddressNotVerified();
         }
         _;
@@ -186,6 +195,16 @@ contract AutographCollections {
         emit GalleryUpdated(msg.sender, galleryId);
     }
 
+    function connectPublication(
+        uint256 postId,
+        uint256 collectionId
+    ) external onlyAction {
+        _collections[collectionId].postIds.push(postId);
+        _postToCollection[postId] = collectionId;
+
+        emit PostIdConnected(postId, collectionId);
+    }
+
     function setTokenIdsToCollection(
         uint256[] memory tokenIds,
         uint256 collectionId
@@ -255,7 +274,7 @@ contract AutographCollections {
 
     function getCollectionPubIds(
         uint256 collectionId
-    ) public view returns (string[] memory) {
+    ) public view returns (uint256[] memory) {
         return _collections[collectionId].postIds;
     }
 
@@ -265,10 +284,16 @@ contract AutographCollections {
         return _collections[collectionId].collectionType;
     }
 
-    function getMintedTokenIds(
+    function getCollectionMintedTokenIds(
         uint256 collectionId
     ) public view returns (uint256[] memory) {
         return _collections[collectionId].mintedTokenIds.values();
+    }
+
+    function getCollectionByPostId(
+        uint256 postId
+    ) public view returns (uint256) {
+        return _postToCollection[postId];
     }
 
     function getNPCToCollections(

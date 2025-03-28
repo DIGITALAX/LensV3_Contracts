@@ -12,13 +12,12 @@ contract AutographLibrary {
     }
 
     struct ActionParams {
-        EnumerableSet.AddressSet acceptedTokens;
+        address[] acceptedTokens;
         string[] pages;
         string uri;
         AutographType autographType;
         uint256 collectionId;
         uint256 price;
-        uint256 galleryId;
         uint256 amount;
         uint8 pageCount;
     }
@@ -27,10 +26,10 @@ contract AutographLibrary {
         string[] pages;
         address[] acceptedTokens;
         string uri;
-        string postId;
         address designer;
         uint256 price;
         uint256 amount;
+        uint256 postId;
         uint8 pageCount;
     }
 
@@ -38,11 +37,11 @@ contract AutographLibrary {
         string[] pages;
         EnumerableSet.AddressSet acceptedTokens;
         string uri;
-        string postId;
         address designer;
         uint256 price;
         uint256 minted;
         uint256 amount;
+        uint256 postId;
         uint8 pageCount;
     }
 
@@ -56,10 +55,10 @@ contract AutographLibrary {
     }
 
     struct Collection {
-        string[] postIds;
         EnumerableSet.AddressSet npcs;
         EnumerableSet.AddressSet acceptedTokens;
         EnumerableSet.UintSet mintedTokenIds;
+        uint256[] postIds;
         string uri;
         address designer;
         uint256 price;
