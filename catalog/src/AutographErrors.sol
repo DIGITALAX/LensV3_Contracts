@@ -7,10 +7,6 @@ contract AutographErrors {
     error CantRemoveSelf();
 
     error AddressNotVerified();
-    error NotEditable();
-    error InvalidParent();
-    error NotGalleryDesigner();
-
     error CollectionNotFound();
 
     error InvalidAddress();

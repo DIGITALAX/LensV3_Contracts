@@ -36,11 +36,11 @@ contract AutographCatalog {
     event AutographCreated(string uri, uint256 amount);
     event AutographTokensMinted(uint16 amount);
 
-    constructor(address _autographAccessControlAddress, address _autographNFT) {
+    constructor(address _autographAccessControl, address _catalogNFT) {
         autographAccessControl = AutographAccessControl(
-            _autographAccessControlAddress
+            _autographAccessControl
         );
-        catalogNFT = _autographNFT;
+        catalogNFT = _catalogNFT;
     }
 
     function createAutograph(

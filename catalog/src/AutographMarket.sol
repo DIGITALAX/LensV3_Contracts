@@ -44,17 +44,15 @@ contract AutographMarket {
     mapping(uint256 => AutographLibrary.SubOrder) private _subOrders;
 
     constructor(
-        string memory _symbol,
-        string memory _name,
         address _autographAccessControl,
         address _autographCatalog,
-        address _autographNFT,
         address _autographCollections,
+        address _autographNFT,
         address _catalogNFT,
         address _autographData
     ) {
-        symbol = _symbol;
-        name = _name;
+        symbol = "AM";
+        name = "AutographMarket";
         autographAccessControl = AutographAccessControl(
             _autographAccessControl
         );
@@ -69,7 +67,6 @@ contract AutographMarket {
         address[] memory currencies,
         uint256[] memory collectionIds,
         uint8[] memory quantities,
-        AutographLibrary.AutographType[] memory types,
         string memory encryptedFulfillment
     ) external {
         uint256 _total = 0;
@@ -79,8 +76,7 @@ contract AutographMarket {
                 msg.sender,
                 currencies[i],
                 collectionIds[i],
-                quantities[i],
-                types[i]
+                quantities[i]
             );
             _subOrderIds[i] = _subOrderId;
             _total += _itemTotal;
@@ -94,15 +90,13 @@ contract AutographMarket {
         address buyer,
         address currency,
         uint256 collectionId,
-        uint8 quantity,
-        AutographLibrary.AutographType autographType
+        uint8 quantity
     ) external onlyOpenAction {
         (uint256 _subOrderId, uint256 _total) = _processType(
             buyer,
             currency,
             collectionId,
-            quantity,
-            autographType
+            quantity
         );
 
         uint256[] memory _subOrderIds = new uint256[](1);
@@ -115,10 +109,18 @@ contract AutographMarket {
         address buyer,
         address currency,
         uint256 collectionId,
-        uint16 amount,
-        AutographLibrary.AutographType autographType
+        uint16 amount
     ) internal returns (uint256, uint256) {
-        _checkAcceptedTokens(currency, collectionId, amount, autographType);
+        AutographLibrary.AutographType _autographType = AutographLibrary
+            .AutographType
+            .Catalog;
+        if (collectionId != 0) {
+            _autographType = autographCollections.getCollectionType(
+                collectionId
+            );
+        }
+
+        _checkAcceptedTokens(currency, collectionId, amount, _autographType);
 
         _subOrderCounter++;
 
@@ -129,7 +131,7 @@ contract AutographMarket {
         uint256 _fulfillerAmount = 0;
         uint256 _totalPrice = 0;
 
-        if (autographType == AutographLibrary.AutographType.Catalog) {
+        if (_autographType == AutographLibrary.AutographType.Catalog) {
             _designerAmount = autographCatalog.getAutographPrice() * amount;
             _totalPrice = _designerAmount;
             _designer = autographCatalog.getAutographDesigner();
@@ -139,7 +141,7 @@ contract AutographMarket {
             _nftIds = catalogNFT.mintBatch(buyer, amount);
         } else {
             uint256 _base = 0;
-            _fulfiller = autographAccessControl.getFulfiller();
+            _fulfiller = autographAccessControl.fulfiller();
             _designer = autographCollections.getCollectionDesigner(
                 collectionId
             );
@@ -147,8 +149,8 @@ contract AutographMarket {
                 autographCollections.getCollectionPrice(collectionId) *
                 amount;
             _totalPrice = _designerAmount;
-            if (autographType != AutographLibrary.AutographType.NFT) {
-                if (autographType == AutographLibrary.AutographType.Hoodie) {
+            if (_autographType != AutographLibrary.AutographType.NFT) {
+                if (_autographType == AutographLibrary.AutographType.Hoodie) {
                     _base = autographData.getHoodieBase();
                 } else {
                     _base = autographData.getShirtBase();
@@ -173,12 +175,12 @@ contract AutographMarket {
         }
 
         _subOrders[_subOrderCounter] = AutographLibrary.SubOrder({
-            autographType: autographType,
+            autographType: _autographType,
             fulfillerAmount: _fulfillerAmount,
             designerAmount: _designerAmount,
             fulfiller: _fulfiller,
             designer: _designer,
-            totalPrice: _totalPrice,
+            total: _totalPrice,
             currency: currency,
             collectionId: collectionId,
             amount: amount,
@@ -254,7 +256,9 @@ contract AutographMarket {
             }
 
             if (
-                autographCollections.getCollectionMintedTokenIds(collectionId).length +
+                autographCollections
+                    .getCollectionMintedTokenIds(collectionId)
+                    .length +
                     amount >
                 autographCollections.getCollectionAmount(collectionId)
             ) {
@@ -344,10 +348,10 @@ contract AutographMarket {
         return _subOrders[subOrderId].collectionId;
     }
 
-    function getSubOrderTotalPrice(
+    function getSubOrderTotal(
         uint256 subOrderId
     ) public view returns (uint256) {
-        return _subOrders[subOrderId].totalPrice;
+        return _subOrders[subOrderId].total;
     }
 
     function getSubOrderDesignerAmount(

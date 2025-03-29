@@ -19,7 +19,6 @@ contract AutographData {
 
     mapping(address => mapping(uint256 => uint256)) private _designerSplits;
     mapping(address => mapping(uint256 => uint256)) private _fulfillerSplits;
-    mapping(address => mapping(uint256 => uint256)) private _treasurySplits;
     mapping(address => mapping(uint256 => uint256)) private _fulfillerBases;
     mapping(address => AutographLibrary.Currency) private _currencies;
 
@@ -30,7 +29,6 @@ contract AutographData {
     );
     event FulfillerBaseSet(address fulfiller, uint256 printType, uint256 split);
     event DesignerSplitSet(address designer, uint256 printType, uint256 split);
-    event TreasurySplitSet(address treasury, uint256 printType, uint256 split);
     event CurrencyAdded(address indexed currency);
     event CurrencyRemoved(address indexed currency);
     event OracleUpdated(address indexed currency, uint256 rate);
@@ -90,18 +88,10 @@ contract AutographData {
         emit DesignerSplitSet(designer, printType, amount);
     }
 
-    function setTreasurySplit(
-        address treasury,
-        uint256 printType,
-        uint256 amount
-    ) external onlyAdmin {
-        _treasurySplits[treasury][printType] = amount;
-        emit TreasurySplitSet(treasury, printType, amount);
-    }
-
     function addCurrency(
         address currency,
-        uint256 weiAmount
+        uint256 weiAmount,
+        uint256 rate
     ) external onlyAdmin {
         if (_allCurrencies.contains(currency)) {
             revert AutographErrors.ExistingCurrency();
@@ -110,6 +100,7 @@ contract AutographData {
         _allCurrencies.add(currency);
 
         _currencies[currency].weiAmount = weiAmount;
+        _currencies[currency].rate = rate;
 
         emit CurrencyAdded(currency);
     }
@@ -123,17 +114,6 @@ contract AutographData {
         delete _currencies[currency];
 
         emit CurrencyRemoved(currency);
-    }
-
-    function setOraclePriceUSD(
-        address currency,
-        uint256 rate
-    ) public onlyAdmin {
-        if (!_allCurrencies.contains(currency)) {
-            revert AutographErrors.InvalidCurrency();
-        }
-        _currencies[currency].rate = rate;
-        emit OracleUpdated(currency, rate);
     }
 
     function setAutographAccessControl(
@@ -163,13 +143,6 @@ contract AutographData {
         uint256 printType
     ) public view returns (uint256) {
         return _designerSplits[designer][printType];
-    }
-
-    function getTreasurySplit(
-        address treasury,
-        uint256 printType
-    ) public view returns (uint256) {
-        return _treasurySplits[treasury][printType];
     }
 
     function getIsCurrency(address currency) public view returns (bool) {

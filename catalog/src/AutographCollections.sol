@@ -27,6 +27,7 @@ contract AutographCollections {
 
     event GalleryCreated(address designer, uint256 galleryId);
     event GalleryUpdated(address designer, uint256 galleryId);
+    event GalleryEdited(string uri, uint256 galleryId);
     event GalleryDeleted(address designer, uint256 galleryId);
     event CollectionDeleted(uint256 collectionId, uint256 galleryId);
     event PostIdConnected(uint256 postId, uint256 collectionId);
@@ -72,6 +73,7 @@ contract AutographCollections {
         _galleryCounter++;
         _designerGalleries[msg.sender].add(_galleryCounter);
         _galleries[_galleryCounter].uri = galleryURI;
+        _galleries[_galleryCounter].designer = msg.sender;
 
         for (uint8 i = 0; i < colls.length; i++) {
             _collectionCounter++;
@@ -105,6 +107,19 @@ contract AutographCollections {
         emit GalleryCreated(msg.sender, _galleryCounter);
     }
 
+    function editGalleryURI(
+        string memory uri,
+        uint256 galleryId
+    ) public onlyDesigner {
+        if (_galleries[galleryId].designer != msg.sender) {
+            revert AutographErrors.AddressNotVerified();
+        }
+
+        _galleries[galleryId].uri = uri;
+
+        emit GalleryEdited(uri, galleryId);
+    }
+
     function deleteGallery(uint16 galleryId) public onlyDesigner {
         if (_galleries[galleryId].designer != msg.sender) {
             revert AutographErrors.AddressNotVerified();
@@ -133,9 +148,11 @@ contract AutographCollections {
 
     function deleteCollection(uint256 collectionId) public onlyDesigner {
         uint256 _galleryId = _collections[collectionId].galleryId;
+
         if (!_galleries[_galleryId].collectionIds.contains(collectionId)) {
             revert AutographErrors.CollectionNotFound();
         }
+
 
         if (_collections[collectionId].designer != msg.sender) {
             revert AutographErrors.AddressNotVerified();
@@ -169,7 +186,7 @@ contract AutographCollections {
             _galleries[galleryId].collectionIds.add(_collectionCounter);
 
             _collections[_collectionCounter].galleryId = galleryId;
-            _collections[_collectionCounter].galleryId = _collectionCounter;
+            _collections[_collectionCounter].designer = msg.sender;
             _collections[_collectionCounter].uri = colls[i].uri;
             _collections[_collectionCounter].amount = colls[i].amount;
             _collections[_collectionCounter].price = colls[i].price;
@@ -201,7 +218,6 @@ contract AutographCollections {
     ) external onlyAction {
         _collections[collectionId].postIds.push(postId);
         _postToCollection[postId] = collectionId;
-
         emit PostIdConnected(postId, collectionId);
     }
 
@@ -272,7 +288,13 @@ contract AutographCollections {
         return _collections[collectionId].acceptedTokens.values();
     }
 
-    function getCollectionPubIds(
+    function getCollectionGallery(
+        uint256 collectionId
+    ) public view returns (uint256) {
+        return _collections[collectionId].galleryId;
+    }
+
+    function getCollectionPostIds(
         uint256 collectionId
     ) public view returns (uint256[] memory) {
         return _collections[collectionId].postIds;

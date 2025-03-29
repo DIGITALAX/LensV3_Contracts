@@ -92,7 +92,7 @@ contract AutographLibrary {
         address currency;
         uint256 fulfillerAmount;
         uint256 designerAmount;
-        uint256 totalPrice;
+        uint256 total;
         uint256 collectionId;
         uint16 amount;
         AutographType autographType;

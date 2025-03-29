@@ -39,9 +39,8 @@ contract AutographAction is IPostAction {
     AutographMarket public autographMarket;
     AutographCollections public autographCollections;
     AutographCatalog public autographCatalog;
-    string private _metadata;
 
-    mapping(uint256 => mapping(uint256 => uint256)) _catalogGroups;
+    mapping(uint256 => uint256) _internalPostToCollection;
 
     modifier OnlyAdmin() {
         if (!autographAccessControl.isAdmin(msg.sender)) {
@@ -51,7 +50,6 @@ contract AutographAction is IPostAction {
     }
 
     constructor(
-        address _autographData,
         address _autographAccessControl,
         address _autographCollections,
         address _autographMarket,
@@ -99,6 +97,8 @@ contract AutographAction is IPostAction {
             );
         }
 
+        _internalPostToCollection[postId] = _autographCreator.collectionId;
+
         return
             abi.encode(
                 _autographCreator.autographType,
@@ -117,29 +117,22 @@ contract AutographAction is IPostAction {
         (
             string memory _encryptedFulfillment,
             address _currency,
-            uint8 _quantity,
-            AutographLibrary.AutographType _type
-        ) = abi.decode(
-                data,
-                (string, address, uint8, AutographLibrary.AutographType)
-            );
+            uint8 _quantity
+        ) = abi.decode(data, (string, address, uint8));
 
         uint256 _collectionId = 0;
 
-        if (_type != AutographLibrary.AutographType.Catalog) {
-            _collectionId = autographCollections.getCollectionByPostId(postId);
-        }
+        _collectionId = _internalPostToCollection[postId];
 
         autographMarket.buyTokenAction(
             _encryptedFulfillment,
             msg.sender,
             _currency,
             _collectionId,
-            _quantity,
-            _type
+            _quantity
         );
 
-        return abi.encode(_type, _currency);
+        return abi.encode(_collectionId, _currency);
     }
 
     function setAutographAccessControl(

@@ -6,7 +6,7 @@ import "./AutographErrors.sol";
 contract AutographAccessControl {
     string public symbol;
     string public name;
-    address private _fulfiller;
+    address public fulfiller;
 
     mapping(address => bool) private _admins;
     mapping(address => bool) private _designers;
@@ -61,7 +61,7 @@ contract AutographAccessControl {
         emit DesignerAdded(designer);
     }
 
-    function removeDesigner(address designer) external onlyAdmin {
+    function removeDesigner(address designer) public onlyAdmin {
         if (!_designers[designer]) {
             revert AutographErrors.AddressInvalid();
         }
@@ -69,7 +69,7 @@ contract AutographAccessControl {
         emit DesignerRemoved(designer);
     }
 
-    function addAction(address action) external onlyAdmin {
+    function addAction(address action) public onlyAdmin {
         if (_actions[action]) {
             revert AutographErrors.Existing();
         }
@@ -77,12 +77,16 @@ contract AutographAccessControl {
         emit ActionAdded(action);
     }
 
-    function removeOpenAction(address action) external onlyAdmin {
+    function removeOpenAction(address action) public onlyAdmin {
         if (!_actions[action]) {
             revert AutographErrors.AddressInvalid();
         }
         _actions[action] = false;
         emit ActionRemoved(action);
+    }
+
+    function setFulfiller(address _fulfiller) public onlyAdmin {
+        fulfiller = _fulfiller;
     }
 
     function isAdmin(address _address) public view returns (bool) {
@@ -95,9 +99,5 @@ contract AutographAccessControl {
 
     function isAction(address _address) public view returns (bool) {
         return _actions[_address];
-    }
-
-    function getFulfiller() public view returns (address) {
-        return _fulfiller;
     }
 }
