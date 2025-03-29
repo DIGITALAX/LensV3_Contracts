@@ -1,0 +1,53 @@
+type CollectionDeleted @entity(immutable: true) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  galleryId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GalleryCreated @entity(immutable: true) {
+  id: Bytes!
+  designer: Bytes! # address
+  galleryId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GalleryDeleted @entity(immutable: true) {
+  id: Bytes!
+  designer: Bytes! # address
+  galleryId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GalleryEdited @entity(immutable: true) {
+  id: Bytes!
+  uri: String! # string
+  galleryId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GalleryUpdated @entity(immutable: true) {
+  id: Bytes!
+  designer: Bytes! # address
+  galleryId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PostIdConnected @entity(immutable: true) {
+  id: Bytes!
+  postId: BigInt! # uint256
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

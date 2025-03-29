@@ -5,6 +5,7 @@ contract AutographErrors {
     error AddressInvalid();
     error Existing();
     error CantRemoveSelf();
+    error NotAgent();
 
     error AddressNotVerified();
     error CollectionNotFound();

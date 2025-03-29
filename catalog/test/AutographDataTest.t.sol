@@ -11,6 +11,7 @@ import "../src/AutographCatalog.sol";
 import "../src/CatalogNFT.sol";
 import "../src/TestERC20.sol";
 import "../src/AutographAction.sol";
+import "../src/skyhunters/SkyhuntersAccessControls.sol";
 
 contract AutographDataTest is Test {
     AutographData public autographData;
@@ -21,6 +22,7 @@ contract AutographDataTest is Test {
     AutographNFT public autographNFT;
     CatalogNFT public catalogNFT;
     AutographAction public autographAction;
+    SkyhuntersAccessControls skyhunters;
     TestERC20 public mona;
     TestERC20 public usdt;
     TestERC20 public eth;
@@ -46,6 +48,7 @@ contract AutographDataTest is Test {
 
     function setUp() public {
         accessControl = new AutographAccessControl();
+        skyhunters = new SkyhuntersAccessControls();
         autographNFT = new AutographNFT(address(accessControl));
         catalogNFT = new CatalogNFT(address(accessControl));
         autographCatalog = new AutographCatalog(
@@ -53,7 +56,10 @@ contract AutographDataTest is Test {
             address(catalogNFT)
         );
         autographData = new AutographData(address(accessControl));
-        autographCollections = new AutographCollections(address(accessControl));
+        autographCollections = new AutographCollections(
+            address(accessControl),
+            payable(address(skyhunters))
+        );
         autographMarket = new AutographMarket(
             address(accessControl),
             address(autographCatalog),
@@ -89,6 +95,11 @@ contract AutographDataTest is Test {
 
         catalogNFT.setAutographCatalog(address(autographCatalog));
         catalogNFT.setAutographMarket(address(autographMarket));
+
+        skyhunters.addAgent(npc1);
+        skyhunters.addAgent(npc2);
+        skyhunters.addAgent(npc3);
+        skyhunters.addAgent(npc4);
 
         autographData.addCurrency(
             address(matic),
@@ -443,11 +454,7 @@ contract AutographDataTest is Test {
         autographAction.execute(
             address(0),
             120,
-            abi.encode(
-                "encryptedForCatalog",
-                address(eth),
-                2
-            )
+            abi.encode("encryptedForCatalog", address(eth), 2)
         );
 
         assertEq(autographMarket.getOrderCounter(), 1);
@@ -518,11 +525,7 @@ contract AutographDataTest is Test {
         autographAction.execute(
             address(0),
             532,
-            abi.encode(
-                "encryptedForCollectionNFT",
-                address(matic),
-                1
-            )
+            abi.encode("encryptedForCollectionNFT", address(matic), 1)
         );
 
         assertEq(autographMarket.getOrderCounter(), 1);
@@ -567,11 +570,7 @@ contract AutographDataTest is Test {
             autographAction.execute(
                 address(0),
                 600,
-                abi.encode(
-                    "encryptedForCollectionNFT",
-                    address(usdt),
-                    2
-                )
+                abi.encode("encryptedForCollectionNFT", address(usdt), 2)
             )
         {
             fail();
@@ -579,7 +578,6 @@ contract AutographDataTest is Test {
             bytes4 errorSelector = bytes4(lowLevelData);
             assertEq(errorSelector, bytes4(EXCEED_AMOUNT_ERROR));
         }
-      
     }
 
     function testCollectionPrintPurchaseOpenAction() public {
@@ -608,11 +606,7 @@ contract AutographDataTest is Test {
         autographAction.execute(
             address(0),
             123333,
-            abi.encode(
-                "encryptedForCollectionHoodie",
-                address(usdt),
-                1
-            )
+            abi.encode("encryptedForCollectionHoodie", address(usdt), 1)
         );
     }
 
@@ -684,11 +678,9 @@ contract AutographDataTest is Test {
         assertEq(autographCatalog.getAutographMinted(), 4);
         assertEq(
             keccak256(
-                abi.encodePacked(
-                    (autographMarket.getSubOrderTokensMinted(2))
-                )
+                abi.encodePacked((autographMarket.getSubOrderTokensMinted(2)))
             ),
-            keccak256(abi.encodePacked(([1,2])))
+            keccak256(abi.encodePacked(([1, 2])))
         );
     }
 }

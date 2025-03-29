@@ -6,12 +6,14 @@ import "./AutographData.sol";
 import "./AutographErrors.sol";
 import "./AutographMarket.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "./skyhunters/SkyhuntersAccessControls.sol";
 
 contract AutographCollections {
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     AutographAccessControl public autographAccessControl;
+    SkyhuntersAccessControls public skyhuntersAccessControls;
     AutographData public autographData;
     address public autographMarket;
     uint256 private _collectionCounter;
@@ -60,9 +62,15 @@ contract AutographCollections {
         _;
     }
 
-    constructor(address _autographAccessControlAddress) {
+    constructor(
+        address _autographAccessControlAddress,
+        address payable _skyhuntersAccessControls
+    ) {
         autographAccessControl = AutographAccessControl(
             _autographAccessControlAddress
+        );
+        skyhuntersAccessControls = SkyhuntersAccessControls(
+            _skyhuntersAccessControls
         );
     }
 
@@ -95,6 +103,9 @@ contract AutographCollections {
             }
 
             for (uint8 j = 0; j < colls[i].npcs.length; j++) {
+                if (!skyhuntersAccessControls.isAgent(colls[i].npcs[j])) {
+                    revert AutographErrors.NotAgent();
+                }
                 _collections[_collectionCounter].npcs.add(colls[i].npcs[j]);
             }
 
@@ -153,7 +164,6 @@ contract AutographCollections {
             revert AutographErrors.CollectionNotFound();
         }
 
-
         if (_collections[collectionId].designer != msg.sender) {
             revert AutographErrors.AddressNotVerified();
         }
@@ -200,6 +210,9 @@ contract AutographCollections {
             }
 
             for (uint8 j = 0; j < colls[i].npcs.length; j++) {
+                if (!skyhuntersAccessControls.isAgent(colls[i].npcs[j])) {
+                    revert AutographErrors.NotAgent();
+                }
                 _collections[_collectionCounter].npcs.add(colls[i].npcs[j]);
             }
 
@@ -236,6 +249,14 @@ contract AutographCollections {
 
     function setAutographMarket(address _autographMarket) public onlyAdmin {
         autographMarket = _autographMarket;
+    }
+
+    function setSkyhuntersAccessControls(
+        address payable _skyhuntersAccessControls
+    ) public onlyAdmin {
+        skyhuntersAccessControls = SkyhuntersAccessControls(
+            _skyhuntersAccessControls
+        );
     }
 
     function setAutographAccessControl(

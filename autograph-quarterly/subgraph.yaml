@@ -1,0 +1,41 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: AutographCollections
+    network: lens-testnet
+    source:
+      address: "0xb8D7431868b9fa64BFd974B3945D11473c41ca71"
+      abi: AutographCollections
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - CollectionDeleted
+        - GalleryCreated
+        - GalleryDeleted
+        - GalleryEdited
+        - GalleryUpdated
+        - PostIdConnected
+      abis:
+        - name: AutographCollections
+          file: ./abis/AutographCollections.json
+      eventHandlers:
+        - event: CollectionDeleted(uint256,uint256)
+          handler: handleCollectionDeleted
+        - event: GalleryCreated(address,uint256)
+          handler: handleGalleryCreated
+        - event: GalleryDeleted(address,uint256)
+          handler: handleGalleryDeleted
+        - event: GalleryEdited(string,uint256)
+          handler: handleGalleryEdited
+        - event: GalleryUpdated(address,uint256)
+          handler: handleGalleryUpdated
+        - event: PostIdConnected(uint256,uint256)
+          handler: handlePostIdConnected
+      file: ./src/autograph-collections.ts
