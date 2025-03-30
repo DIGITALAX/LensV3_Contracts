@@ -39,3 +39,73 @@ dataSources:
         - event: PostIdConnected(uint256,uint256)
           handler: handlePostIdConnected
       file: ./src/autograph-collections.ts
+  - kind: ethereum
+    name: AutographCatalog
+    network: lens-testnet
+    source:
+      address: "0x09eb7FdDae34a218E28D1e3606E8BE9D885F7b2A"
+      abi: AutographCatalog
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - AutographCreated
+        - AutographTokensMinted
+      abis:
+        - name: AutographCatalog
+          file: ./abis/AutographCatalog.json
+      eventHandlers:
+        - event: AutographCreated(string,uint256)
+          handler: handleAutographCreated
+        - event: AutographTokensMinted(uint16)
+          handler: handleAutographTokensMinted
+      file: ./src/autograph-catalog.ts
+  - kind: ethereum
+    name: AutographMarket
+    network: lens-testnet
+    source:
+      address: "0xDf5Bbc3259abc34c30EDeA931819b040A5B3199d"
+      abi: AutographMarket
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - OrderCreated
+      abis:
+        - name: AutographMarket
+          file: ./abis/AutographMarket.json
+        - name: AutographCollections
+          file: ./abis/AutographCollections.json
+      eventHandlers:
+        - event: OrderCreated(uint256[],uint256,uint256)
+          handler: handleOrderCreated
+      file: ./src/autograph-market.ts
+templates:
+  - name: CollectionMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/ds-handlers.ts
+      handler: handleCollectionMetadata
+      entities:
+        - CollectionMetadata
+      abis:
+        - name: AutographData
+          file: ./abis/AutographMarket.json
+  - name: GalleryMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/ds-handlers.ts
+      handler: handleGalleryMetadata
+      entities:
+        - GalleryMetadata
+      abis:
+        - name: AutographData
+          file: ./abis/AutographMarket.json

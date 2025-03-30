@@ -1,4 +1,4 @@
-type CollectionDeleted @entity(immutable: true) {
+type CollectionDeleted @entity(immutable: false) {
   id: Bytes!
   collectionId: BigInt! # uint256
   galleryId: BigInt! # uint256
@@ -7,7 +7,20 @@ type CollectionDeleted @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type GalleryCreated @entity(immutable: true) {
+type GalleryCreated @entity(immutable: false) {
+  id: Bytes!
+  designer: Bytes! # address
+  galleryId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  collections: [Collection!]
+  collectionIds: [BigInt!]
+  metadata: GalleryMetadata
+  uri: String!
+}
+
+type GalleryDeleted @entity(immutable: false) {
   id: Bytes!
   designer: Bytes! # address
   galleryId: BigInt! # uint256
@@ -16,16 +29,25 @@ type GalleryCreated @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type GalleryDeleted @entity(immutable: true) {
+type Collection @entity(immutable: false) {
   id: Bytes!
   designer: Bytes! # address
   galleryId: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  metadata: CollectionMetadata
+  uri: String!
+  amount: BigInt!
+  type: BigInt!
+  npcs: [Bytes!]
+  acceptedTokens: [Bytes!]
+  mintedTokenIds: [BigInt!]
+  postIds: [BigInt!]
+  price: BigInt!
 }
 
-type GalleryEdited @entity(immutable: true) {
+type GalleryEdited @entity(immutable: false) {
   id: Bytes!
   uri: String! # string
   galleryId: BigInt! # uint256
@@ -34,7 +56,7 @@ type GalleryEdited @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type GalleryUpdated @entity(immutable: true) {
+type GalleryUpdated @entity(immutable: false) {
   id: Bytes!
   designer: Bytes! # address
   galleryId: BigInt! # uint256
@@ -43,7 +65,7 @@ type GalleryUpdated @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type PostIdConnected @entity(immutable: true) {
+type PostIdConnected @entity(immutable: false) {
   id: Bytes!
   postId: BigInt! # uint256
   collectionId: BigInt! # uint256
@@ -51,3 +73,78 @@ type PostIdConnected @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+type AutographCreated @entity(immutable: false) {
+  id: Bytes!
+  uri: String! # string
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  pages: [String!]
+  acceptedTokens: [Bytes!]
+  designer: Bytes
+  price: BigInt!
+  minted: BigInt
+  postId: BigInt!
+  pageCount: BigInt!
+
+}
+
+type AutographTokensMinted @entity(immutable: false) {
+  id: Bytes!
+  amount: Int! # uint16
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type OrderCreated @entity(immutable: false) {
+  id: Bytes!
+  subOrderIds: [BigInt!]! # uint256[]
+  total: BigInt! # uint256
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  subOrders: [SubOrder!]
+  fulfillment: String
+}
+
+type CollectionMetadata @entity {
+  id: ID!
+  title: String!
+  description: String!
+  tipo: String!
+  tags: String
+  npcs: String
+  instructions: String
+  images: [String!]
+  colors: [String!]
+}
+
+type GalleryMetadata @entity {
+  id: ID!
+  title: String!
+  description: String!
+  image: String!
+}
+
+type SubOrder @entity {
+  id: Bytes!
+  mintedTokenIds: [BigInt!]
+  fulfiller: Bytes!
+  designer: Bytes!
+  currency: Bytes!
+  fulfillerAmount: BigInt!
+  designerAmount: BigInt!
+  total: BigInt!
+  collectionId: BigInt!
+  amount: BigInt!
+  autographType: BigInt!
+}
+
+type AgentCollections @entity {
+  id: Bytes!
+  collections: [Collection!]
+  npc: Bytes!
+}
+

@@ -1,13 +1,13 @@
 {
-  "name": "autograph-quarterly",
+  "name": "autograph-lensv3",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ autograph-quarterly",
-    "create-local": "graph create --node http://localhost:8020/ autograph-quarterly",
-    "remove-local": "graph remove --node http://localhost:8020/ autograph-quarterly",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 autograph-quarterly",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ autograph-lensv3",
+    "create-local": "graph create --node http://localhost:8020/ autograph-lensv3",
+    "remove-local": "graph remove --node http://localhost:8020/ autograph-lensv3",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 autograph-lensv3",
     "test": "graph test"
   },
   "dependencies": {

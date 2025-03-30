@@ -1,12 +1,12 @@
 const { ethers } = require("ethers");
 require("dotenv").config();
 
-const controlAbi = require("./../../autograph-quarterly/abis/AutographAccessControl.json");
-const marketAbi = require("./../../autograph-quarterly/abis/AutographMarket.json");
-const collectionsAbi = require("./../../autograph-quarterly/abis/AutographCollections.json");
-const autoNFTAbi = require("./../../autograph-quarterly/abis/AutographNFT.json");
-const catalogNFTAbi = require("./../../autograph-quarterly/abis/CatalogNFT.json");
-const dataAbi = require("./../../autograph-quarterly/abis/AutographData.json");
+const controlAbi = require("./../../autograph-lensv3/abis/AutographAccessControl.json");
+const marketAbi = require("./../../autograph-lensv3/abis/AutographMarket.json");
+const collectionsAbi = require("./../../autograph-lensv3/abis/AutographCollections.json");
+const autoNFTAbi = require("./../../autograph-lensv3/abis/AutographNFT.json");
+const catalogNFTAbi = require("./../../autograph-lensv3/abis/CatalogNFT.json");
+const dataAbi = require("./../../autograph-lensv3/abis/AutographData.json");
 
 const provider = new ethers.JsonRpcProvider(
   "https://rpc.testnet.lens.dev",

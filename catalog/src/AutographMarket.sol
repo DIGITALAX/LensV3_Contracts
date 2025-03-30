@@ -37,7 +37,7 @@ contract AutographMarket {
         _;
     }
 
-    event OrderCreated(uint256[] subOrderIds, uint256 totla, uint256 orderId);
+    event OrderCreated(uint256[] subOrderIds, uint256 total, uint256 orderId);
 
     mapping(address => uint256[]) private _buyerToOrders;
     mapping(uint256 => AutographLibrary.Order) private _orders;

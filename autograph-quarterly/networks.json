@@ -3,6 +3,12 @@
     "AutographCollections": {
       "address": "0xb8D7431868b9fa64BFd974B3945D11473c41ca71",
       "startBlock": 0
+    },
+    "AutographCatalog": {
+      "address": "0x09eb7FdDae34a218E28D1e3606E8BE9D885F7b2A"
+    },
+    "AutographMarket": {
+      "address": "0xDf5Bbc3259abc34c30EDeA931819b040A5B3199d"
     }
   }
 }
