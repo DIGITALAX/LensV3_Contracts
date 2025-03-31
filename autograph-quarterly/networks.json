@@ -9,6 +9,9 @@
     },
     "AutographMarket": {
       "address": "0xDf5Bbc3259abc34c30EDeA931819b040A5B3199d"
+    },
+    "AutographData": {
+      "address": "0x9b6157F69e42F0c1fC163b8DacdCBA8a2917FfF0"
     }
   }
 }

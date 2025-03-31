@@ -15,11 +15,11 @@ contract AutographLibrary {
         address[] acceptedTokens;
         string[] pages;
         string uri;
-        AutographType autographType;
         uint256 collectionId;
         uint256 price;
         uint256 amount;
         uint8 pageCount;
+        AutographType autographType;
     }
 
     struct AutographInit {

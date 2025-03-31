@@ -33,12 +33,10 @@ type Collection @entity(immutable: false) {
   id: Bytes!
   designer: Bytes! # address
   galleryId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
   metadata: CollectionMetadata
   uri: String!
   amount: BigInt!
+  collectionId: BigInt!
   type: BigInt!
   npcs: [Bytes!]
   acceptedTokens: [Bytes!]
@@ -124,7 +122,6 @@ type CollectionMetadata @entity {
 type GalleryMetadata @entity {
   id: ID!
   title: String!
-  description: String!
   image: String!
 }
 
@@ -148,3 +145,59 @@ type AgentCollections @entity {
   npc: Bytes!
 }
 
+type CurrencyAdded @entity(immutable: true) {
+  id: Bytes!
+  currency: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  wei: BigInt!
+  rate: BigInt!
+}
+
+type CurrencyRemoved @entity(immutable: true) {
+  id: Bytes!
+  currency: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DesignerSplitSet @entity(immutable: true) {
+  id: Bytes!
+  designer: Bytes! # address
+  printType: BigInt! # uint256
+  split: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FulfillerBaseSet @entity(immutable: true) {
+  id: Bytes!
+  fulfiller: Bytes! # address
+  printType: BigInt! # uint256
+  split: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FulfillerSplitSet @entity(immutable: true) {
+  id: Bytes!
+  fulfiller: Bytes! # address
+  printType: BigInt! # uint256
+  split: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OracleUpdated @entity(immutable: true) {
+  id: Bytes!
+  currency: Bytes! # address
+  rate: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

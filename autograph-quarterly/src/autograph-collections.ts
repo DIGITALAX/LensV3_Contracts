@@ -72,7 +72,7 @@ export function handleGalleryCreated(event: GalleryCreatedEvent): void {
     let coll = new Collection(
       Bytes.fromByteArray(ByteArray.fromBigInt((entity.collectionIds as BigInt[])[i]))
     );
-
+coll.collectionId = (entity.collectionIds as BigInt[])[i];
     coll.acceptedTokens = collection
       .getCollectionAcceptedTokens((entity.collectionIds as BigInt[])[i])
       .map<Bytes>((target: Bytes) => target);
@@ -236,7 +236,7 @@ export function handleGalleryUpdated(event: GalleryUpdatedEvent): void {
             )
           )
         );
-
+        coll.collectionId = (gallery.collectionIds as BigInt[])[i];
         coll.acceptedTokens = collection
           .getCollectionAcceptedTokens(
             (gallery.collectionIds as BigInt[])[i] as BigInt

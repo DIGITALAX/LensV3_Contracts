@@ -12,7 +12,7 @@ contract AutographCatalog {
     AutographLibrary.Autograph private _autograph;
     address public catalogNFT;
 
-    modifier onlyOpenAction() {
+    modifier onlyAction() {
         if (!autographAccessControl.isAction(msg.sender)) {
             revert AutographErrors.AddressInvalid();
         }
@@ -45,7 +45,7 @@ contract AutographCatalog {
 
     function createAutograph(
         AutographLibrary.AutographInit memory autograph
-    ) external onlyOpenAction {
+    ) external onlyAction {
         _autograph.uri = autograph.uri;
         _autograph.amount = autograph.amount;
         _autograph.price = autograph.price;
