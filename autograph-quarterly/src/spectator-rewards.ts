@@ -137,6 +137,8 @@ export function handleSpectated(event: SpectatedEvent): void {
   score.scorer = event.params.spectator;
   score.metadata = entity.metadata;
   score.blockTimestamp = entity.blockTimestamp;
+  score.blockNumber = entity.blockNumber;
+  score.transactionHash = entity.transactionHash;
   score.save();
 
   scores.push(score.id);
