@@ -5,6 +5,7 @@ import {
 } from "../generated/AutographMarket/AutographMarket";
 import {
   AgentCollections,
+  AutographCreated,
   Collection,
   OrderCreated,
   SubOrder,
@@ -25,7 +26,7 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   let market = AutographMarket.bind(event.address);
 
   entity.fulfillment = market.getOrderFulfillment(entity.orderId);
-
+  entity.buyer = market.getOrderBuyer(entity.orderId);
   let subOrders: Bytes[] = [];
 
   for (let i = 0; i < entity.subOrderIds.length; i++) {
@@ -53,6 +54,15 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
     subOrder.mintedTokenIds = market.getSubOrderTokensMinted(
       entity.subOrderIds[i]
     );
+    if (subOrder.autographType !== BigInt.fromI32(3)) {
+      subOrder.collection = Bytes.fromByteArray(
+        ByteArray.fromBigInt(subOrder.collectionId)
+      );
+    } else {
+      subOrder.catalog = Bytes.fromByteArray(
+        ByteArray.fromBigInt(BigInt.fromI32(1))
+      );
+    }
 
     subOrder.save();
 
@@ -65,14 +75,10 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
     );
 
     if (coll) {
-      let tokens = coll.mintedTokenIds;
+      let tokens = market.getSubOrderTokensMinted(entity.subOrderIds[i]);
 
       if (!tokens) {
         tokens = [];
-      }
-
-      for (let j = 0; j < tokens.length; j++) {
-        tokens.push(tokens[j]);
       }
 
       coll.mintedTokenIds = tokens;

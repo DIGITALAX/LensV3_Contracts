@@ -157,9 +157,15 @@ contract AutographDataTest is Test {
                 collectionId: 0
             });
 
-        bytes memory data = abi.encode(params);
+        KeyValue[] memory params_config = new KeyValue[](1);
+
+        params_config[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+
         vm.prank(owner);
-        autographAction.configure(address(0), 120, data);
+        autographAction.configure(owner, address(0), 120, params_config);
 
         assertEq(autographCatalog.getAutographAmount(), 500);
         assertEq(autographCatalog.getAutographPrice(), 100000000000000000000);
@@ -345,8 +351,13 @@ contract AutographDataTest is Test {
                 collectionId: 1
             });
 
-        bytes memory data = abi.encode(params);
-        autographAction.configure(address(0), 450, data);
+        KeyValue[] memory params_config = new KeyValue[](1);
+
+        params_config[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+        autographAction.configure(owner, address(0), 450, params_config);
 
         AutographLibrary.ActionParams memory paramsTwo = AutographLibrary
             .ActionParams({
@@ -360,8 +371,13 @@ contract AutographDataTest is Test {
                 collectionId: 4
             });
 
-        bytes memory dataTwo = abi.encode(paramsTwo);
-        autographAction.configure(address(0), 1523, dataTwo);
+        KeyValue[] memory params_config1 = new KeyValue[](1);
+
+        params_config1[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(paramsTwo)
+        });
+        autographAction.configure(owner, address(0), 1523, params_config1);
 
         assertEq(autographCollections.getCollectionByPostId(450), 1);
         assertEq(autographCollections.getCollectionPostIds(1)[0], 450);
@@ -443,19 +459,37 @@ contract AutographDataTest is Test {
                 collectionId: 0
             });
 
-        bytes memory data = abi.encode(params);
+        KeyValue[] memory params_config = new KeyValue[](1);
 
-        autographAction.configure(address(0), 120, data);
+        params_config[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+
+        autographAction.configure(owner, address(0), 120, params_config);
 
         eth.transfer(buyer, 96270018146898420);
         vm.startPrank(buyer);
         eth.approve(address(autographMarket), 96270018146898420);
 
-        autographAction.execute(
-            address(0),
-            120,
-            abi.encode("encryptedForCatalog", address(eth), 2)
-        );
+        KeyValue[] memory params_execute = new KeyValue[](3);
+
+        params_execute[0] = KeyValue({
+            key: bytes32(abi.encodePacked("encryptedFulfillment")),
+            value: abi.encode("encryptedForCatalog")
+        });
+
+        params_execute[1] = KeyValue({
+            key: bytes32(abi.encodePacked("currency")),
+            value: abi.encode(address(eth))
+        });
+
+        params_execute[2] = KeyValue({
+            key: bytes32(abi.encodePacked("quantity")),
+            value: abi.encode(uint256(2))
+        });
+
+        autographAction.execute(buyer, address(0), 120, params_execute);
 
         assertEq(autographMarket.getOrderCounter(), 1);
         assertEq(autographMarket.getOrderBuyer(1), buyer);
@@ -499,9 +533,13 @@ contract AutographDataTest is Test {
                 collectionId: 3
             });
 
-        bytes memory data = abi.encode(params);
+        KeyValue[] memory params_config = new KeyValue[](1);
 
-        autographAction.configure(address(0), 532, data);
+        params_config[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+        autographAction.configure(owner, address(0), 532, params_config);
 
         params = AutographLibrary.ActionParams({
             autographType: AutographLibrary.AutographType.NFT,
@@ -514,19 +552,38 @@ contract AutographDataTest is Test {
             collectionId: 2
         });
 
-        data = abi.encode(params);
-        autographAction.configure(address(0), 600, data);
+        KeyValue[] memory params_config1 = new KeyValue[](1);
+
+        params_config1[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+
+        autographAction.configure(owner, address(0), 600, params_config1);
 
         matic.transfer(buyer, 259000259000259000259);
         vm.prank(buyer);
         matic.approve(address(autographMarket), 259000259000259000259);
 
+        KeyValue[] memory params_execute = new KeyValue[](3);
+
+        params_execute[0] = KeyValue({
+            key: bytes32(abi.encodePacked("encryptedFulfillment")),
+            value: abi.encode("encryptedForCollectionNFT")
+        });
+
+        params_execute[1] = KeyValue({
+            key: bytes32(abi.encodePacked("currency")),
+            value: abi.encode(address(matic))
+        });
+
+        params_execute[2] = KeyValue({
+            key: bytes32(abi.encodePacked("quantity")),
+            value: abi.encode(uint256(1))
+        });
+
         vm.prank(buyer);
-        autographAction.execute(
-            address(0),
-            532,
-            abi.encode("encryptedForCollectionNFT", address(matic), 1)
-        );
+        autographAction.execute(buyer, address(0), 532, params_execute);
 
         assertEq(autographMarket.getOrderCounter(), 1);
         assertEq(autographMarket.getOrderBuyer(1), buyer);
@@ -565,14 +622,25 @@ contract AutographDataTest is Test {
         vm.prank(buyer);
         usdt.approve(address(autographMarket), 259000259000259000259);
 
+        KeyValue[] memory params_execute1 = new KeyValue[](3);
+
+        params_execute1[0] = KeyValue({
+            key: bytes32(abi.encodePacked("encryptedFulfillment")),
+            value: abi.encode("encryptedForCollectionNFT")
+        });
+
+        params_execute1[1] = KeyValue({
+            key: bytes32(abi.encodePacked("currency")),
+            value: abi.encode(address(usdt))
+        });
+
+        params_execute1[2] = KeyValue({
+            key: bytes32(abi.encodePacked("quantity")),
+            value: abi.encode(uint256(2))
+        });
+
         vm.prank(buyer);
-        try
-            autographAction.execute(
-                address(0),
-                600,
-                abi.encode("encryptedForCollectionNFT", address(usdt), 2)
-            )
-        {
+        try autographAction.execute(buyer, address(0), 600, params_execute1) {
             fail();
         } catch (bytes memory lowLevelData) {
             bytes4 errorSelector = bytes4(lowLevelData);
@@ -599,15 +667,33 @@ contract AutographDataTest is Test {
                 collectionId: 1
             });
 
-        bytes memory data = abi.encode(params);
-        autographAction.configure(address(0), 123333, data);
+        KeyValue[] memory params_config = new KeyValue[](1);
+
+        params_config[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+        autographAction.configure(owner, address(0), 123333, params_config);
+
+        KeyValue[] memory params_execute = new KeyValue[](3);
+
+        params_execute[0] = KeyValue({
+            key: bytes32(abi.encodePacked("encryptedFulfillment")),
+            value: abi.encode("encryptedForCollectionHoodie")
+        });
+
+        params_execute[1] = KeyValue({
+            key: bytes32(abi.encodePacked("currency")),
+            value: abi.encode(address(usdt))
+        });
+
+        params_execute[2] = KeyValue({
+            key: bytes32(abi.encodePacked("quantity")),
+            value: abi.encode(uint256(1))
+        });
 
         vm.prank(buyer);
-        autographAction.execute(
-            address(0),
-            123333,
-            abi.encode("encryptedForCollectionHoodie", address(usdt), 1)
-        );
+        autographAction.execute(buyer, address(0), 123333, params_execute);
     }
 
     function testCatalogCollectionPurchase() public {
@@ -635,9 +721,13 @@ contract AutographDataTest is Test {
                 collectionId: 0
             });
 
-        bytes memory data = abi.encode(params);
+        KeyValue[] memory params_config = new KeyValue[](1);
 
-        autographAction.configure(address(0), 120, data);
+        params_config[0] = KeyValue({
+            key: bytes32(abi.encodePacked("autographCreator")),
+            value: abi.encode(params)
+        });
+        autographAction.configure(owner, address(0), 120, params_config);
 
         eth.transfer(buyer, 298810054000000000);
         vm.prank(buyer);

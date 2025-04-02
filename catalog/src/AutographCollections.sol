@@ -240,6 +240,7 @@ contract AutographCollections {
     ) external onlyMarket {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _tokenIdToCollection[tokenIds[i]] = collectionId;
+            _collections[collectionId].mintedTokenIds.add(tokenIds[i]);
         }
     }
 

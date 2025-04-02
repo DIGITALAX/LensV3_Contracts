@@ -12,6 +12,9 @@
     },
     "AutographData": {
       "address": "0x9b6157F69e42F0c1fC163b8DacdCBA8a2917FfF0"
+    },
+    "SpectatorRewards": {
+      "address": "0xEBF04050D02F3Fa1a9428170e2E42e9608280a12"
     }
   }
 }

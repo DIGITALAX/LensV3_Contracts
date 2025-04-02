@@ -85,7 +85,6 @@ type AutographCreated @entity(immutable: false) {
   minted: BigInt
   postId: BigInt!
   pageCount: BigInt!
-
 }
 
 type AutographTokensMinted @entity(immutable: false) {
@@ -104,6 +103,7 @@ type OrderCreated @entity(immutable: false) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
   subOrders: [SubOrder!]
+  buyer: Bytes!
   fulfillment: String
 }
 
@@ -137,6 +137,8 @@ type SubOrder @entity {
   collectionId: BigInt!
   amount: BigInt!
   autographType: BigInt!
+  collection: Collection
+  catalog: AutographCreated
 }
 
 type AgentCollections @entity {
@@ -200,4 +202,84 @@ type OracleUpdated @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+}
+
+type AgentAUUpdated @entity(immutable: true) {
+  id: Bytes!
+  agent: Bytes! # address
+  au: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type AgentPaidAU @entity(immutable: true) {
+  id: Bytes!
+  agent: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Spectated @entity(immutable: true) {
+  id: Bytes!
+  data: String! # string
+  spectator: Bytes! # address
+  count: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  metadata: SpectateMetadata
+  agent: Bytes!
+}
+
+type SpectatorBalanceUpdated @entity(immutable: true) {
+  id: Bytes!
+  spectator: Bytes! # address
+  balance: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type AgentScores @entity {
+  id: Bytes!
+  npc: Bytes
+  scores: [Score!]
+  auEarnedTotal: BigInt
+  auEarnedCurrent: BigInt
+}
+
+type Score @entity {
+  id: Bytes!
+  scorer: Bytes
+  metadata: SpectateMetadata
+  blockTimestamp: BigInt!
+  npc: Bytes
+}
+
+type SpectateMetadata @entity {
+  id: ID!
+  comment: String
+  model: BigInt
+  scene: BigInt
+  chatContext: BigInt
+  appearance: BigInt
+  personality: BigInt
+  training: BigInt
+  lora: BigInt
+  collections: BigInt
+  spriteSheet: BigInt
+  tokenizer: BigInt
+  global: BigInt
+}
+
+type SpectatorInfo @entity {
+  id: Bytes!
+  spectator: Bytes!
+  auClaimed: BigInt
+  auEarned: BigInt
+  auToClaim: BigInt
+  initialization: BigInt
 }

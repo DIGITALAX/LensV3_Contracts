@@ -119,6 +119,35 @@ dataSources:
         - event: OracleUpdated(indexed address,uint256)
           handler: handleOracleUpdated
       file: ./src/autograph-data.ts
+  - kind: ethereum
+    name: SpectatorRewards
+    network: lens-testnet
+    source:
+      address: "0xEBF04050D02F3Fa1a9428170e2E42e9608280a12"
+      abi: SpectatorRewards
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - AgentAUUpdated
+        - AgentPaidAU
+        - Spectated
+        - SpectatorBalanceUpdated
+      abis:
+        - name: SpectatorRewards
+          file: ./abis/SpectatorRewards.json
+      eventHandlers:
+        - event: AgentAUUpdated(address,uint256)
+          handler: handleAgentAUUpdated
+        - event: AgentPaidAU(address,uint256)
+          handler: handleAgentPaidAU
+        - event: Spectated(string,address,uint256)
+          handler: handleSpectated
+        - event: SpectatorBalanceUpdated(address,uint256)
+          handler: handleSpectatorBalanceUpdated
+      file: ./src/spectator-rewards.ts
 templates:
   - name: CollectionMetadata
     kind: file/ipfs
@@ -130,7 +159,7 @@ templates:
       entities:
         - CollectionMetadata
       abis:
-        - name: AutographData
+        - name: AutographMarket
           file: ./abis/AutographMarket.json
   - name: GalleryMetadata
     kind: file/ipfs
@@ -142,5 +171,17 @@ templates:
       entities:
         - GalleryMetadata
       abis:
-        - name: AutographData
+        - name: AutographMarket
+          file: ./abis/AutographMarket.json
+  - name: SpectateMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/ds-handlers.ts
+      handler: handleSpectateMetadata
+      entities:
+        - SpectateMetadata
+      abis:
+        - name: AutographMarket
           file: ./abis/AutographMarket.json

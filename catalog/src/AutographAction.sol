@@ -8,29 +8,32 @@ import "./AutographMarket.sol";
 import "./AutographErrors.sol";
 import "./AutographCatalog.sol";
 
+struct KeyValue {
+    bytes32 key;
+    bytes value;
+}
+
 interface IPostAction {
-    event Lens_PostAction_Configured(
-        address indexed feed,
-        uint256 indexed postId,
-        bytes data
-    );
-
-    event Lens_PostAction_Executed(
-        address indexed feed,
-        uint256 indexed postId,
-        bytes data
-    );
-
     function configure(
+        address originalMsgSender,
         address feed,
         uint256 postId,
-        bytes calldata data
+        KeyValue[] calldata params
     ) external returns (bytes memory);
 
     function execute(
+        address originalMsgSender,
         address feed,
         uint256 postId,
-        bytes calldata data
+        KeyValue[] calldata params
+    ) external returns (bytes memory);
+
+    function setDisabled(
+        address originalMsgSender,
+        address feed,
+        uint256 postId,
+        bool isDisabled,
+        KeyValue[] calldata params
     ) external returns (bytes memory);
 }
 
@@ -64,10 +67,12 @@ contract AutographAction is IPostAction {
     }
 
     function configure(
+        address originalMsgSender,
         address feed,
         uint256 postId,
-        bytes calldata data
+        KeyValue[] calldata params
     ) external override returns (bytes memory) {
+        bytes memory data = _getParamValue(params, "autographCreator");
         AutographLibrary.ActionParams memory _autographCreator = abi.decode(
             data,
             (AutographLibrary.ActionParams)
@@ -76,7 +81,7 @@ contract AutographAction is IPostAction {
         if (
             _autographCreator.autographType ==
             AutographLibrary.AutographType.Catalog &&
-            autographAccessControl.isAdmin(msg.sender)
+            autographAccessControl.isAdmin(originalMsgSender)
         ) {
             autographCatalog.createAutograph(
                 AutographLibrary.AutographInit({
@@ -86,7 +91,7 @@ contract AutographAction is IPostAction {
                     postId: postId,
                     amount: _autographCreator.amount,
                     pages: _autographCreator.pages,
-                    designer: msg.sender,
+                    designer: originalMsgSender,
                     pageCount: _autographCreator.pageCount
                 })
             );
@@ -110,15 +115,25 @@ contract AutographAction is IPostAction {
     }
 
     function execute(
+        address originalMsgSender,
         address feed,
         uint256 postId,
-        bytes calldata data
+        KeyValue[] calldata params
     ) external override returns (bytes memory) {
-        (
-            string memory _encryptedFulfillment,
-            address _currency,
-            uint8 _quantity
-        ) = abi.decode(data, (string, address, uint8));
+        string memory _encryptedFulfillment = abi.decode(
+            _getParamValue(params, "encryptedFulfillment"),
+            (string)
+        );
+
+        address _currency = abi.decode(
+            _getParamValue(params, "currency"),
+            (address)
+        );
+
+        uint8 _quantity = abi.decode(
+            _getParamValue(params, "quantity"),
+            (uint8)
+        );
 
         uint256 _collectionId = 0;
 
@@ -126,13 +141,36 @@ contract AutographAction is IPostAction {
 
         autographMarket.buyTokenAction(
             _encryptedFulfillment,
-            msg.sender,
+            originalMsgSender,
             _currency,
             _collectionId,
             _quantity
         );
 
         return abi.encode(_collectionId, _currency);
+    }
+
+    function setDisabled(
+        address originalMsgSender,
+        address feed,
+        uint256 postId,
+        bool isDisabled,
+        KeyValue[] calldata params
+    ) external override returns (bytes memory) {
+        return "";
+    }
+
+    function _getParamValue(
+        KeyValue[] calldata params,
+        string memory keyLabel
+    ) internal pure returns (bytes memory) {
+        bytes32 lookupKey = bytes32(abi.encodePacked(keyLabel));
+        for (uint256 i = 0; i < params.length; i++) {
+            if (params[i].key == lookupKey) {
+                return params[i].value;
+            }
+        }
+        revert("Key not found");
     }
 
     function setAutographAccessControl(
