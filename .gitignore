@@ -1,33 +1,11 @@
-/catalog/cache/
-/catalog/out/
-/catalog/zkout/
-/catalog/src/skyhunters/
+**/.env
 
-/catalog/!/broadcast
-/catalog/broadcast/*/31337/
-/catalog/broadcast/**/dry-run/
-/catalog/install.log
+**/node_modules/
 
-/catalog/docs/
-/catalog/lib/*
-/catalog/.github/
+**/cache/
+**/out/
+**/zkout/
 
-/catalog/.env
-
-
-/print/cache/
-/print/out/
-/print/zkout/
-/print/src/skyhunters/
-
-/print/!/broadcast
-/print/broadcast/*/31337/
-/print/broadcast/**/dry-run/
-/print/install.log
-
-/print/docs/
-/print/lib/*
-/print/.github/
-
-.github/
-/print/.env
+**/build/
+**/generated/
+**/lib/
