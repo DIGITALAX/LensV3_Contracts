@@ -1,0 +1,196 @@
+type CollectionCreated @entity(immutable: false) {
+  id: Bytes!
+  uri: String! # string
+  designer: Bytes! # address
+  collectionId: BigInt! # uint256
+  postId: BigInt! # uint256
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  metadata: CollectionMetadata
+  dropId: BigInt
+  drop: DropCreated
+  price: BigInt
+  acceptedTokens: [Bytes!]
+  unlimited: Boolean
+  fulfiller: Bytes
+  origin: BigInt
+  printType: BigInt
+  frozen: Boolean
+  tokenIdsMinted: [BigInt!]
+}
+
+type CollectionDeleted @entity(immutable: false) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CollectionFrozen @entity(immutable: false) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CollectionTokenIdsSet @entity(immutable: false) {
+  id: Bytes!
+  tokenIds: [BigInt!]! # uint256[]
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CollectionUnfrozen @entity(immutable: false) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DropCreated @entity(immutable: false) {
+  id: Bytes!
+  uri: String! # string
+  designer: Bytes! # address
+  dropId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  metadata: DropMetadata
+  collections: [CollectionCreated!]
+}
+
+type DropDeleted @entity(immutable: false) {
+  id: Bytes!
+  dropId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DropModified @entity(immutable: false) {
+  id: Bytes!
+  dropId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type OrderCreated @entity(immutable: false) {
+  id: Bytes!
+  buyer: Bytes! # address
+  collectionId: BigInt! # uint256
+  orderId: BigInt! # uint256
+  totalPrice: BigInt! # uint256
+  blockNumber: BigInt!
+  currency: Bytes!
+  amount: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  collection: CollectionCreated
+  details: String
+  messages: [String!]
+  status: BigInt
+  isFulfilled: Boolean
+  tokenIds: [BigInt!]
+  fulfiller: Bytes
+}
+
+type OrderIsFulfilled @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdateOrderDetails @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdateOrderMessage @entity(immutable: false) {
+  id: Bytes!
+  newMessageDetails: String! # string
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdateOrderStatus @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt! # uint256
+  newSubOrderStatus: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DropMetadata @entity {
+  id: ID!
+  cover: String
+  title: String
+}
+
+type CollectionMetadata @entity {
+  id: ID!
+  title: String
+  description: String
+  images: [String!]
+  tags: String
+  colors: String
+  sizes: String
+  access: String
+  audio: String
+  video: String
+  onChromadin: String
+  microbrandCover: String
+  microbrand: String
+  mediaCover: String
+  visibility: String
+  mediaTypes: String
+  prompt: String
+  style: String
+  sex: String
+  extra: String
+}
+type CurrencyAdded @entity(immutable: false) {
+  id: Bytes!
+  currency: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  wei: BigInt
+  rate: BigInt
+  transactionHash: Bytes!
+  fulfillerSplit: BigInt # uint256
+  fulfillerBase: BigInt # uint256
+  printType: BigInt # uint8
+}
+
+type CurrencyRemoved @entity(immutable: false) {
+  id: Bytes!
+  currency: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type SplitsSet @entity(immutable: false) {
+  id: Bytes!
+  currency: Bytes! # address
+  fulfillerSplit: BigInt! # uint256
+  fulfillerBase: BigInt! # uint256
+  printType: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

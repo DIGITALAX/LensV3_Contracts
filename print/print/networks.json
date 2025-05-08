@@ -1,0 +1,14 @@
+{
+  "lens": {
+    "CollectionCreator": {
+      "address": "0x52b229A682689Cd4f33E9fA7A47b0895cEB8Fe47",
+      "startBlock": 0
+    },
+    "MarketCreator": {
+      "address": "0x4f5324fC74b17816eb6c871f547bB76390a6d669"
+    },
+    "PrintSplitsData": {
+      "address": "0x9FA74AA5668F0B178a3607986080962322370Bbe"
+    }
+  }
+}

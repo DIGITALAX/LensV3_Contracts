@@ -1,0 +1,48 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: SpectatorRewards
+    network: lens
+    source:
+      address: "0x176e1c5083565d3D9591BDEE12F5f4D47B0Eb19E"
+      abi: SpectatorRewards
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - AgentAUUpdated
+        - AgentPaidAU
+        - Spectated
+        - SpectatorBalanceUpdated
+      abis:
+        - name: SpectatorRewards
+          file: ./abis/SpectatorRewards.json
+      eventHandlers:
+        - event: AgentAUUpdated(address,uint256)
+          handler: handleAgentAUUpdated
+        - event: AgentPaidAU(address,uint256)
+          handler: handleAgentPaidAU
+        - event: Spectated(string,address,uint256)
+          handler: handleSpectated
+        - event: SpectatorBalanceUpdated(address,uint256)
+          handler: handleSpectatorBalanceUpdated
+      file: ./src/spectator-rewards.ts
+templates:
+  - name: SpectateMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/ds-handlers.ts
+      handler: handleSpectateMetadata
+      entities:
+        - SpectateMetadata
+      abis:
+        - name: SpectatorRewards
+          file: ./abis/SpectatorRewards.json

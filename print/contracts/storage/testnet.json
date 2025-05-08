@@ -1,0 +1,21 @@
+{
+  "access": "0x5CE9ae6760f46a94EFaBeB27cbdd1899b5063f3C",
+  "splits": "0x8B1CCa71051cbe222DaF05CA16BF193B055da796",
+  "nftCreator": "0x199B478d7F47ab0f3851F34fE3Ae3F8581bb78B4",
+  "nfts": {
+    "f3m": "0x85397B911f804F8AfCbf831411eEBCF3DBDD8a72",
+    "chroma": "0x6C2EA1F994eCEaC0552Cf412a3777ec1a2ED8378",
+    "coin": "",
+    "listener": ""
+  },
+  "collectionCreator": "0x400D2e3838aDFB19f63850BA1bE830dc78F48417",
+  "marketCreator": "0x101d0145F3e65A74f8734050e853B39ffCe5D706",
+  "actions": {
+    "f3m": "0x7293B359b526453741497224Fe06924524286145",
+    "chroma": "0x244EF88945a94a9cD5d733CC21bEe18505882064",
+    "coin": "",
+    "listener": ""
+  }
+}
+
+

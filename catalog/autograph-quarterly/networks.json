@@ -1,0 +1,20 @@
+{
+  "lens": {
+    "AutographCollections": {
+      "address": "0x9840ed34cbC19fE414d5f17eA165214a65A1FC76",
+      "startBlock": 0
+    },
+    "AutographCatalog": {
+      "address": "0x928F1B622389038552dE950E3928CBc44BC4d409"
+    },
+    "AutographMarket": {
+      "address": "0x67819a22df4232726C7B911C1D4d5c06Cf080Cf8"
+    },
+    "AutographData": {
+      "address": "0x35D448F099A3d312a82f33990EcF50fe3aECbF23"
+    },
+    "SpectatorRewards": {
+      "address": "0xEBF04050D02F3Fa1a9428170e2E42e9608280a12"
+    }
+  }
+}
