@@ -63,15 +63,8 @@ contract ParentFGO is ERC721 {
         _mint(buyer, _supply);
         _tokenIdToParent[_supply] = parentId;
 
-        for (
-            uint8 i = 0;
-            i < _parentTokens[parentId].childIds.length;
-            i++
-        ) {
-            childFGO.mintWithURI(
-                buyer,
-                _parentTokens[parentId].childIds[i]
-            );
+        for (uint8 i = 0; i < _parentTokens[parentId].childIds.length; i++) {
+            childFGO.mintWithURI(buyer, _parentTokens[parentId].childIds[i]);
         }
 
         emit ParentWithChildrenMinted(_supply, parentId);
@@ -98,6 +91,46 @@ contract ParentFGO is ERC721 {
         _burn(tokenId);
 
         delete _tokenIdToParent[tokenId];
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override {
+        if (msg.sender != ownerOf(tokenId)) {
+            revert FGOErrors.AddressInvalid();
+        }
+
+        _transferWithChildren(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public virtual override {
+        if (msg.sender != ownerOf(tokenId)) {
+            revert FGOErrors.AddressInvalid();
+        }
+
+        _transferWithChildren(from, to, tokenId);
+    }
+
+    function _transferWithChildren(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal {
+        uint256 parentId = _tokenIdToParent[tokenId];
+
+        for (uint256 i = 0; i < _parentTokens[parentId].childIds.length; i++) {
+            uint256 childId = _parentTokens[parentId].childIds[i];
+            childFGO.safeTransferFrom(from, to, childId, 1, "");
+        }
+
+        _transfer(from, to, tokenId);
     }
 
     function setChildFGO(address _childFGO) public onlyAdmin {

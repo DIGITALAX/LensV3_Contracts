@@ -58,6 +58,32 @@ contract ChildFGO is ERC1155 {
         return _childTokens[id].uri;
     }
 
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public virtual override {
+        if (msg.sender != parentFGO) {
+            revert FGOErrors.AddressInvalid();
+        }
+        _safeTransferFrom(from, to, id, amount, data);
+    }
+
+    function safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) public virtual override {
+        if (msg.sender != parentFGO) {
+            revert FGOErrors.AddressInvalid();
+        }
+        _safeBatchTransferFrom(from, to, ids, amounts, data);
+    }
+
     function burn(address from, uint256 id) external onlyParent {
         _burn(from, id, 1);
     }

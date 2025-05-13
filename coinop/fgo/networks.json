@@ -3,6 +3,15 @@
     "ParentFGO": {
       "address": "0x76B58506A7524B450B348bfF27978327A1C1F7F4",
       "startBlock": 0
+    },
+    "FGOMarket": {
+      "address": "0x1Ee35F520a2DE56f18Bfe53EC93D50f91eF32F94"
+    },
+    "ChildFGO": {
+      "address": "0x4b4d0e7DF49066C76c620Df037887b660DeC47B7"
+    },
+    "CustomCompositeNFT": {
+      "address": "0x834e380837691071422a96AAb9F7144058aDfD9a"
     }
   }
 }

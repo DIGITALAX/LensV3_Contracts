@@ -322,4 +322,57 @@ contract FGOTest is Test {
         assertEq(buyerBeforemona - _monaAmount, mona.balanceOf(buyer));
         assertEq(fulfillerBeforemona + _monaAmount, mona.balanceOf(fulfiller));
     }
+
+    function testBurnDeletesParentAndChildren() public {
+        testBuyFGO();
+
+        assertEq(parentFGO.ownerOf(1), buyer);
+        assertEq(childFGO.balanceOf(buyer, 1), 1);
+        assertEq(childFGO.balanceOf(buyer, 3), 1);
+
+        vm.prank(buyer);
+        parentFGO.burnParent(1);
+
+        vm.expectRevert();
+        parentFGO.ownerOf(1);
+
+        assertEq(childFGO.balanceOf(buyer, 1), 0);
+        assertEq(childFGO.balanceOf(buyer, 3), 0);
+    }
+
+    function testTransferAlsoMovesChildren() public {
+        testBuyFGO();
+
+        address receiver = address(9);
+
+        assertEq(parentFGO.ownerOf(1), buyer);
+        assertEq(childFGO.balanceOf(buyer, 1), 1);
+        assertEq(childFGO.balanceOf(buyer, 3), 1);
+        assertEq(childFGO.balanceOf(receiver, 1), 0);
+        assertEq(childFGO.balanceOf(receiver, 3), 0);
+
+        vm.prank(buyer);
+        parentFGO.transferFrom(buyer, receiver, 1);
+
+        assertEq(parentFGO.ownerOf(1), receiver);
+        assertEq(childFGO.balanceOf(receiver, 1), 1);
+        assertEq(childFGO.balanceOf(receiver, 3), 1);
+
+        assertEq(childFGO.balanceOf(buyer, 1), 0);
+        assertEq(childFGO.balanceOf(buyer, 3), 0);
+    }
+
+    function testCannotBurnOrTransferChildrenDirectly() public {
+    testBuyFGO();
+
+    vm.startPrank(buyer);
+    vm.expectRevert(); 
+    childFGO.burn(buyer, 1);
+    vm.stopPrank();
+
+    vm.startPrank(buyer);
+    vm.expectRevert(); 
+    childFGO.safeTransferFrom(buyer, address(99), 1, 1, "");
+    vm.stopPrank();
+}
 }

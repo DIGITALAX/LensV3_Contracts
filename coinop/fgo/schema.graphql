@@ -1,4 +1,4 @@
-type Approval @entity(immutable: true) {
+type Approval @entity(immutable: false) {
   id: Bytes!
   owner: Bytes! # address
   approved: Bytes! # address
@@ -8,7 +8,7 @@ type Approval @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type ApprovalForAll @entity(immutable: true) {
+type ApprovalForAll @entity(immutable: false) {
   id: Bytes!
   owner: Bytes! # address
   operator: Bytes! # address
@@ -18,15 +18,27 @@ type ApprovalForAll @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type ParentCreated @entity(immutable: true) {
+type ParentCreated @entity(immutable: false) {
   id: Bytes!
   parentId: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  childIds: [BigInt!]
+  uri: String!
+  poster: String!
+  price: BigInt!
+  printType: BigInt!
+  children: [ChildCreated!]
 }
 
-type ParentWithChildrenMinted @entity(immutable: true) {
+type ChildCreated @entity(immutable: false) {
+  id: Bytes!
+  uri: String!
+  price: BigInt!
+}
+
+type ParentWithChildrenMinted @entity(immutable: false) {
   id: Bytes!
   tokenId: BigInt! # uint256
   parentId: BigInt! # uint256
@@ -35,7 +47,156 @@ type ParentWithChildrenMinted @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type Transfer @entity(immutable: true) {
+type Transfer @entity(immutable: false) {
+  id: Bytes!
+  from: Bytes! # address
+  to: Bytes! # address
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type OrderCreated @entity(immutable: false) {
+  id: Bytes!
+  buyer: Bytes! # address
+  parentId: BigInt! # uint256
+  parentTokenId: BigInt!
+  tokenId: BigInt!
+  orderId: BigInt! # uint256
+  totalPrice: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  compositeMetadata: CompositeMetadata
+  compositeURI: String!
+  currency: Bytes!
+  transactionHash: Bytes!
+  details: String
+  messages: [String!]
+  status: BigInt
+  isFulfilled: Boolean
+}
+
+type CompositeMetadata @entity(immutable: false) {
+  id: ID!
+  title: String
+  image: String
+  color: String
+  size: String
+}
+
+type OrderIsFulfilled @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdateOrderDetails @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdateOrderMessage @entity(immutable: false) {
+  id: Bytes!
+  newMessageDetails: String! # string
+  orderId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdateOrderStatus @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt! # uint256
+  newSubOrderStatus: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type ChildFGOApprovalForAll @entity(immutable: true) {
+  id: Bytes!
+  account: Bytes! # address
+  operator: Bytes! # address
+  approved: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ChildMinted @entity(immutable: true) {
+  id: Bytes!
+  childId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TransferBatch @entity(immutable: true) {
+  id: Bytes!
+  operator: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  ids: [BigInt!]! # uint256[]
+  values: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TransferSingle @entity(immutable: true) {
+  id: Bytes!
+  operator: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  internal_id: BigInt! # uint256
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type URI @entity(immutable: true) {
+  id: Bytes!
+  value: String! # string
+  internal_id: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type CustomCompositeNFTApproval @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  approved: Bytes! # address
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CustomCompositeNFTApprovalForAll @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  operator: Bytes! # address
+  approved: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenMinted @entity(immutable: true) {
+  id: Bytes!
+  buyer: Bytes! # address
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CustomCompositeNFTTransfer @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
   to: Bytes! # address
