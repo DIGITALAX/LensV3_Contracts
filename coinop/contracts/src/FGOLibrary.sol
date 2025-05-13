@@ -13,7 +13,6 @@ contract FGOLibrary {
     struct ChildMetadata {
         string uri;
         uint256 price;
-        uint256 id;
     }
 
     struct ParentMetadata {

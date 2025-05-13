@@ -1,0 +1,8 @@
+{
+  "lens-testnet": {
+    "ParentFGO": {
+      "address": "0x76B58506A7524B450B348bfF27978327A1C1F7F4",
+      "startBlock": 0
+    }
+  }
+}

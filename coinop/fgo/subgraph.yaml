@@ -1,0 +1,38 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ParentFGO
+    network: lens-testnet
+    source:
+      address: "0x76B58506A7524B450B348bfF27978327A1C1F7F4"
+      abi: ParentFGO
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - ParentCreated
+        - ParentWithChildrenMinted
+        - Transfer
+      abis:
+        - name: ParentFGO
+          file: ./abis/ParentFGO.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: ParentCreated(uint256)
+          handler: handleParentCreated
+        - event: ParentWithChildrenMinted(uint256,uint256)
+          handler: handleParentWithChildrenMinted
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/parent-fgo.ts

@@ -23,7 +23,7 @@ contract CustomCompositeNFT is ERC721Enumerable {
     }
 
     modifier onlyMarket() {
-        if (market == msg.sender) {
+        if (market != msg.sender) {
             revert FGOErrors.AddressInvalid();
         }
         _;

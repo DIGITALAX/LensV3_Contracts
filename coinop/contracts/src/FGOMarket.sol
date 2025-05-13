@@ -6,9 +6,9 @@ import "./FGOAccessControl.sol";
 import "./CustomCompositeNFT.sol";
 import "./ParentFGO.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./../../../print/contracts/src/PrintSplitsData.sol";
+import "./lib/PrintSplitsData.sol";
 
-contract MarketCreator {
+contract FGOMarket {
     FGOAccessControl public accessControl;
     CustomCompositeNFT public customComposite;
     PrintSplitsData public printSplitsData;
@@ -58,25 +58,35 @@ contract MarketCreator {
         name = "FGOMarket";
     }
 
-    function buyTokens(FGOLibrary.BuyParms memory params) external {
-        if (!printSplitsData.getIsCurrency(params.currency)) {
-            revert PrintErrors.CurrencyNotWhitelisted();
+    function buyComposites(FGOLibrary.BuyParms[] memory params) external {
+        for (uint8 i = 0; i < params.length; i++) {
+            if (!printSplitsData.getIsCurrency(params[i].currency)) {
+                revert PrintErrors.CurrencyNotWhitelisted();
+            }
         }
 
-        uint256 _total = _transferTokens(
-            params.currency,
-            msg.sender,
-            params.parentId
-        );
+        for (uint8 i = 0; i < params.length; i++) {
+            uint256 _total = _transferTokens(
+                params[i].currency,
+                msg.sender,
+                params[i].parentId
+            );
 
-        uint256 _tokenId = customComposite.mint(params.uri, msg.sender);
+            uint256 _tokenId = customComposite.mint(params[i].uri, msg.sender);
 
-        uint256 _parentTokenId = parentFGO.mintParentWithChildren(
-            msg.sender,
-            params.parentId
-        );
+            uint256 _parentTokenId = parentFGO.mintParentWithChildren(
+                msg.sender,
+                params[i].parentId
+            );
 
-        _createOrder(params, msg.sender, _total, _parentTokenId, _tokenId);
+            _createOrder(
+                params[i],
+                msg.sender,
+                _total,
+                _parentTokenId,
+                _tokenId
+            );
+        }
     }
 
     function _createOrder(
@@ -165,13 +175,14 @@ contract MarketCreator {
 
         uint256 _totalPrice = _parentPrice + _childPrice;
 
+        uint256 _calculatedPrice = _calculateAmount(currency, _totalPrice);
         IERC20(currency).transferFrom(
             buyer,
             accessControl.getFulfiller(),
-            _totalPrice
+            _calculatedPrice
         );
 
-        return _totalPrice;
+        return _calculatedPrice;
     }
 
     function _calculateAmount(
