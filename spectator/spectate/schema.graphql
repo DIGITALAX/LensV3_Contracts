@@ -1,0 +1,81 @@
+type AgentAUUpdated @entity(immutable: false) {
+  id: Bytes!
+  agent: Bytes! # address
+  au: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type AgentPaidAU @entity(immutable: false) {
+  id: Bytes!
+  agent: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Spectated @entity(immutable: false) {
+  id: Bytes!
+  data: String! # string
+  spectator: Bytes! # address
+  count: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type SpectatorBalanceUpdated @entity(immutable: false) {
+  id: Bytes!
+  spectator: Bytes! # address
+  balance: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Spectator @entity(immutable: false) {
+  id: Bytes!
+  spectator: Bytes! # address
+  auEarned: BigInt
+  auClaimed: BigInt
+  auToClaim: BigInt
+  initialization: BigInt
+  activity: [Activity!]
+  cycleAgents: [Bytes!]
+}
+
+type Agent @entity(immutable: false) {
+  id: Bytes!
+  address: Bytes! # address
+  au: BigInt
+  auTotal: BigInt
+  cycleSpectators: [Bytes!]
+  activity: [Activity!]
+}
+
+type Activity @entity(immutable: false) {
+  id: Bytes!
+  data: String
+  blockTimestamp: BigInt
+  agent: Bytes
+  spectator: Bytes
+  spectateMetadata: SpectateMetadata
+}
+
+type SpectateMetadata @entity(immutable: false) {
+  id: ID!
+  comment: String
+  model: BigInt
+  scene: BigInt
+  chatContext: BigInt
+  appearance: BigInt
+  collections: BigInt
+  personality: BigInt
+  training: BigInt
+  tokenizer: BigInt
+  lora: BigInt
+  spriteSheet: BigInt
+  global: BigInt
+}

@@ -1,0 +1,13 @@
+**/.env
+
+**/node_modules/
+
+**/cache/
+**/out/
+**/zkout/
+
+**/build/
+**/generated/
+**/lib/
+
+**/scripts/

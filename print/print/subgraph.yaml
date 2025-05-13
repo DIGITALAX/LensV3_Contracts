@@ -1,0 +1,130 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CollectionCreator
+    network: lens
+    source:
+      address: "0x52b229A682689Cd4f33E9fA7A47b0895cEB8Fe47"
+      abi: CollectionCreator
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - CollectionCreated
+        - CollectionDeleted
+        - CollectionFrozen
+        - CollectionTokenIdsSet
+        - CollectionUnfrozen
+        - DropCreated
+        - DropDeleted
+        - DropModified
+      abis:
+        - name: CollectionCreator
+          file: ./abis/CollectionCreator.json
+      eventHandlers:
+        - event: CollectionCreated(string,address,uint256,uint256,uint256)
+          handler: handleCollectionCreated
+        - event: CollectionDeleted(uint256)
+          handler: handleCollectionDeleted
+        - event: CollectionFrozen(uint256)
+          handler: handleCollectionFrozen
+        - event: CollectionTokenIdsSet(uint256[],uint256)
+          handler: handleCollectionTokenIdsSet
+        - event: CollectionUnfrozen(uint256)
+          handler: handleCollectionUnfrozen
+        - event: DropCreated(string,address,uint256)
+          handler: handleDropCreated
+        - event: DropDeleted(uint256)
+          handler: handleDropDeleted
+        - event: DropModified(uint256)
+          handler: handleDropModified
+      file: ./src/collection-creator.ts
+  - kind: ethereum
+    name: MarketCreator
+    network: lens
+    source:
+      address: "0x4f5324fC74b17816eb6c871f547bB76390a6d669"
+      abi: MarketCreator
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - OrderCreated
+        - OrderIsFulfilled
+        - UpdateOrderDetails
+        - UpdateOrderMessage
+        - UpdateOrderStatus
+      abis:
+        - name: MarketCreator
+          file: ./abis/MarketCreator.json
+      eventHandlers:
+        - event: OrderCreated(address,uint256,uint256,uint256)
+          handler: handleOrderCreated
+        - event: OrderIsFulfilled(indexed uint256)
+          handler: handleOrderIsFulfilled
+        - event: UpdateOrderDetails(indexed uint256)
+          handler: handleUpdateOrderDetails
+        - event: UpdateOrderMessage(string,indexed uint256)
+          handler: handleUpdateOrderMessage
+        - event: UpdateOrderStatus(indexed uint256,uint8)
+          handler: handleUpdateOrderStatus
+      file: ./src/market-creator.ts
+  - kind: ethereum
+    name: PrintSplitsData
+    network: lens
+    source:
+      address: "0x9FA74AA5668F0B178a3607986080962322370Bbe"
+      abi: PrintSplitsData
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - CurrencyAdded
+        - CurrencyRemoved
+        - SplitsSet
+      abis:
+        - name: PrintSplitsData
+          file: ./abis/PrintSplitsData.json
+      eventHandlers:
+        - event: CurrencyAdded(indexed address,uint256,uint256)
+          handler: handleCurrencyAdded
+        - event: CurrencyRemoved(indexed address)
+          handler: handleCurrencyRemoved
+        - event: SplitsSet(address,uint256,uint256,uint8)
+          handler: handleSplitsSet
+      file: ./src/print-splits-data.ts
+templates:
+  - name: CollectionMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/ds-handlers.ts
+      handler: handleCollectionMetadata
+      entities:
+        - CollectionMetadata
+      abis:
+        - name: CollectionCreator
+          file: ./abis/CollectionCreator.json
+  - name: DropMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      file: ./src/ds-handlers.ts
+      handler: handleDropMetadata
+      entities:
+        - DropMetadata
+      abis:
+        - name: CollectionCreator
+          file: ./abis/CollectionCreator.json

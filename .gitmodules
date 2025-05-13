@@ -1,0 +1,18 @@
+[submodule "print/contracts/lib/openzeppelin-contracts"]
+	path = print/contracts/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "mona/lib/layerzero-v2"]
+	path = mona/lib/layerzero-v2
+	url = https://github.com/LayerZero-Labs/layerzero-v2
+[submodule "mona/lib/devtools"]
+	path = mona/lib/devtools
+	url = https://github.com/LayerZero-Labs/devtools
+[submodule "f3m/contracts/lib/openzeppelin-contracts"]
+	path = f3m/contracts/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "coinop/contracts/lib/openzeppelin-contracts"]
+	path = coinop/contracts/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
